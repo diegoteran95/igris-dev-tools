@@ -1,0 +1,12 @@
+name: igris-json-tools
+
+services:
+  igris-json-tools:
+    image: igris-json-tools:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    container_name: igris-json-tools
+    restart: unless-stopped
