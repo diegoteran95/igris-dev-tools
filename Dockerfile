@@ -32,3 +32,20 @@ EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+var requiresCryptogram = map[Criteria]bool{
+	{TokenType: rep.SUBSCRIPTION, TransactionType: constants.ValidateCard, IsRecurrent: false, SubscriptionType: ""}:                   true,
+	{TokenType: rep.SUBSCRIPTION, TransactionType: constants.CofInitial, IsRecurrent: false, SubscriptionType: ""}:                     true,
+	{TokenType: rep.SUBSCRIPTION, TransactionType: constants.CofSubsequent, IsRecurrent: false, SubscriptionType: constants.Scheduled}: false,
+	{TokenType: rep.SUBSCRIPTION, TransactionType: constants.CofSubsequent, IsRecurrent: false, SubscriptionType: constants.OnDemand}:  true,
+	{TokenType: rep.SUBSCRIPTION, TransactionType: constants.Charge, IsRecurrent: true, SubscriptionType: ""}:                          true,
+	{TokenType: rep.TRANSACTION, TransactionType: constants.Charge, IsRecurrent: false, SubscriptionType: ""}:                          true,
+	{TokenType: rep.TRANSACTION, TransactionType: constants.Charge, IsRecurrent: true, SubscriptionType: ""}:                           false,
+	{TokenType: rep.TRANSACTION, TransactionType: constants.PreAuth, IsRecurrent: false, SubscriptionType: ""}:                         true,
+	{TokenType: rep.TRANSACTION, TransactionType: constants.ReAuth, IsRecurrent: false, SubscriptionType: ""}:                          false,
+	{TokenType: rep.TRANSACTION, TransactionType: constants.Refund, IsRecurrent: false, SubscriptionType: ""}:                          false,
+	{TokenType: "", TransactionType: constants.Void, IsRecurrent: false, SubscriptionType: ""}:                                         false,
+	{TokenType: "", TransactionType: constants.Reverse, IsRecurrent: false, SubscriptionType: ""}:            
+    
+    false,
+}

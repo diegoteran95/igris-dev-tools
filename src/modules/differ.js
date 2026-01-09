@@ -1,8 +1,21 @@
+import { Formatter } from './formatter.js';
+
 export const Differ = {
-  compare(json1, json2) {
-    // 1. Format both JSONs to ensure consistent comparison
-    const str1 = JSON.stringify(json1, null, 2);
-    const str2 = JSON.stringify(json2, null, 2);
+  compare(json1, json2, raw1 = null, raw2 = null) {
+    // 1. Format both JSONs to ensure consistent comparison (with sorted keys)
+    // If raw strings are provided, use them directly to ensure what is diffed matches EXACTLY what is in the editor.
+    let str1, str2;
+    
+    if (raw1 !== null && raw2 !== null) {
+        str1 = raw1;
+        str2 = raw2;
+    } else {
+        const sorted1 = this.sortKeys(json1);
+        const sorted2 = this.sortKeys(json2);
+        
+        str1 = JSON.stringify(sorted1, null, 2);
+        str2 = JSON.stringify(sorted2, null, 2);
+    }
     
     const lines1 = str1.split('\n');
     const lines2 = str2.split('\n');
@@ -10,7 +23,21 @@ export const Differ = {
     // 2. Compute diff
     const diff = this.diffLines(lines1, lines2);
     this.lastDiff = diff; // Store for merging
-    return this.renderDiff(diff);
+    
+    // 3. Check if there are any differences
+    const hasDifferences = diff.some(part => part.type === 'added' || part.type === 'removed');
+    
+    let html;
+    if (!hasDifferences) {
+      // No differences found - show formatted JSON with syntax highlighting
+      const formattedJson = Formatter.format(json1);
+      const highlightedJson = Formatter.highlight(formattedJson);
+      html = `<div style="white-space: pre; font-family: var(--code-font); font-size: 0.9rem;">${highlightedJson}</div>`;
+    } else {
+      html = this.renderDiff(diff);
+    }
+    
+    return { hasDifferences, html };
   },
 
   diffLines(lines1, lines2) {
@@ -31,7 +58,8 @@ export const Differ = {
         let foundSync = false;
         
         // Look ahead in lines2 for lines1[i] (Detect Insertion)
-        for (let k = j + 1; k < Math.min(j + 10, lines2.length); k++) {
+        // Window of 100 lines handles most real-world cases efficiently
+        for (let k = j + 1; k < Math.min(j + 100, lines2.length); k++) {
            if (lines2[k] === lines1[i]) {
              // Found match, everything from j to k is ADDED
              for (let l = j; l < k; l++) {
@@ -46,7 +74,7 @@ export const Differ = {
         if (foundSync) continue;
         
         // Look ahead in lines1 for lines2[j] (Detect Deletion)
-        for (let k = i + 1; k < Math.min(i + 10, lines1.length); k++) {
+        for (let k = i + 1; k < Math.min(i + 100, lines1.length); k++) {
            if (lines1[k] === lines2[j]) {
              // Found match, everything from i to k is REMOVED
              for (let l = i; l < k; l++) {
@@ -84,12 +112,14 @@ export const Differ = {
       const nextPart = diff[i + 1];
       
       // Check for Modification (Remove followed by Add)
-      if (part.type === 'removed' && nextPart && nextPart.type === 'added') {
+      // Only merge if they are "related" (same key or both not keys)
+      const isModification = part.type === 'removed' && 
+                             nextPart && 
+                             nextPart.type === 'added' &&
+                             this.extractKey(part.content) === this.extractKey(nextPart.content);
+
+      if (isModification) {
         // Render as a "Replace" block
-        // We'll show both lines, but with a single "Replace" button on the first line (or both?)
-        // Let's put a "Replace" button on the Removed line, and maybe an "Add" on the Added line?
-        // Or better: A "Replace" button that does both.
-        
         const removeContent = this.escapeHtml(part.content);
         const addContent = this.escapeHtml(nextPart.content);
         
@@ -126,6 +156,32 @@ export const Differ = {
     return html;
   },
   
+  extractKey(line) {
+    // Match "key": ... or 'key': ...
+    // Returns null if not a key-value line
+    const match = line.match(/^\s*["']([^"']+)["']\s*:/);
+    return match ? match[1] : null;
+  },
+
+  sortKeys(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.sortKeys(item));
+    }
+    
+    const sorted = {};
+    const keys = Object.keys(obj).sort();
+    
+    keys.forEach(key => {
+      sorted[key] = this.sortKeys(obj[key]);
+    });
+    
+    return sorted;
+  },
+
   escapeHtml(str) {
     return str
       .replace(/&/g, '&amp;')

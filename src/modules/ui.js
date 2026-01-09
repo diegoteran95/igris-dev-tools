@@ -7,10 +7,12 @@ export const UI = {
       output: document.getElementById('json-output'),
       formatBtn: document.getElementById('btn-format'),
       minifyBtn: document.getElementById('btn-minify'),
+      escapeBtn: document.getElementById('btn-escape'),
       compareBtn: document.getElementById('btn-compare'),
       diffBtn: document.getElementById('btn-diff'),
       themeToggle: document.getElementById('theme-toggle'),
       errorMsg: document.getElementById('error-msg'),
+      successMsg: document.getElementById('success-msg'),
       
       // Diff elements
       formatWorkspace: document.getElementById('format-workspace'),
@@ -40,6 +42,7 @@ export const UI = {
       this.elements.diffBtn.textContent = 'Switch to Diff Mode';
       this.elements.formatBtn.style.display = 'inline-block';
       this.elements.minifyBtn.style.display = 'inline-block';
+      this.elements.escapeBtn.style.display = 'inline-block';
       this.elements.compareBtn.style.display = 'none';
       if (diffNote) diffNote.style.display = 'none';
     } else {
@@ -49,6 +52,7 @@ export const UI = {
       this.elements.diffBtn.textContent = 'Switch to Format Mode';
       this.elements.formatBtn.style.display = 'none';
       this.elements.minifyBtn.style.display = 'none';
+      this.elements.escapeBtn.style.display = 'none';
       this.elements.compareBtn.style.display = 'inline-block';
       if (diffNote) diffNote.style.display = 'block';
     }
@@ -77,5 +81,23 @@ export const UI = {
     if (this.elements.errorMsg) {
       this.elements.errorMsg.classList.remove('visible');
     }
+  },
+
+  showSuccess(msg) {
+    if (this.elements.successMsg) {
+      this.elements.successMsg.textContent = msg;
+      this.elements.successMsg.classList.add('visible');
+    }
+  },
+
+  clearSuccess() {
+    if (this.elements.successMsg) {
+      this.elements.successMsg.classList.remove('visible');
+    }
+  },
+
+  clearAllMessages() {
+    this.clearError();
+    this.clearSuccess();
   }
 };

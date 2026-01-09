@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (error) {
       UI.showError(`Invalid JSON: ${Formatter.getErrorDetails(error)}`);
     } else {
-      UI.clearError();
+      UI.clearAllMessages();
       const formatted = Formatter.format(data);
       UI.elements.output.innerHTML = Formatter.highlight(formatted);
     }
@@ -38,9 +38,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (error) {
       UI.showError(`Invalid JSON: ${Formatter.getErrorDetails(error)}`);
     } else {
-      UI.clearError();
+      UI.clearAllMessages();
       const minified = Formatter.minify(data);
       UI.elements.output.textContent = minified;
+    }
+  });
+
+  document.getElementById('btn-escape')?.addEventListener('click', () => {
+    const input = UI.elements.input.value;
+    if (!input.trim()) return;
+
+    const { data, error } = Formatter.parse(input);
+    
+    if (error) {
+      UI.showError(`Invalid JSON: ${Formatter.getErrorDetails(error)}`);
+    } else {
+      UI.clearAllMessages();
+      const escaped = Formatter.escape(data);
+      UI.elements.output.textContent = escaped;
     }
   });
   
@@ -50,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       UI.editors.left.setValue('');
       UI.editors.right.setValue('');
       UI.elements.diffOutput.textContent = '';
-      UI.clearError();
+      UI.clearAllMessages();
   });
 
   document.getElementById('btn-compare')?.addEventListener('click', () => {
@@ -67,17 +82,30 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
       }
       
+      
       // Force format the editors so that the text matches the diff lines
       // This is crucial for the merge logic (splice) to use correct indices
-      const formatted1 = Formatter.format(res1.data);
-      const formatted2 = Formatter.format(res2.data);
+      // We also SORT keys here so the editor content matches the internal sorted comparison
+      const sorted1 = Differ.sortKeys(res1.data);
+      const sorted2 = Differ.sortKeys(res2.data);
+      
+      
+      const formatted1 = Formatter.format(sorted1);
+      const formatted2 = Formatter.format(sorted2);
       
       UI.editors.left.setValue(formatted1);
       UI.editors.right.setValue(formatted2);
       
-      UI.clearError();
-      const diffHtml = Differ.compare(res1.data, res2.data);
-      UI.elements.diffOutput.innerHTML = diffHtml;
+      UI.clearAllMessages();
+      // Pass the sorted data to Differ (it will sort again, which is harmless, but ensures consistency)
+      // FIX: Pass the formatted strings directly to ensure the diff matches the editor LINE-FOR-LINE.
+      // This avoids any subtle differences between re-sorting/re-stringifying.
+      const { hasDifferences, html } = Differ.compare(sorted1, sorted2, formatted1, formatted2);
+      UI.elements.diffOutput.innerHTML = html;
+      
+      if (!hasDifferences) {
+          UI.showSuccess('✅ No differences found - JSONs are identical!');
+      }
 
   });
 
@@ -139,9 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Merge Logic
   UI.elements.diffOutput.addEventListener('click', (e) => {
-    if (e.target.classList.contains('merge-btn')) {
-      const index = parseInt(e.target.getAttribute('data-index'), 10);
-      const action = e.target.getAttribute('data-action');
+    // Traverse up just in case the icon inside the button was clicked
+    const btn = e.target.closest('.merge-btn');
+    if (btn) {
+      const index = parseInt(btn.getAttribute('data-index'), 10);
+      const action = btn.getAttribute('data-action');
       mergeChange(index, action);
     }
   });
@@ -153,19 +183,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const change = diff[index];
     const leftValue = UI.editors.left.getValue();
     
-    let lines = leftValue.split('\n');
+    // Normalize newlines for splitting, handle potential CR/LF differences
+    let lines = leftValue.replace(/\r\n/g, '\n').split('\n');
+    
+    // --- Safety Check ---
+    // Only verify content if we are modifying existing lines (remove/replace)
+    // For 'add', we are inserting new content, so the current line won't match change.content
+    if (action === 'remove' || action === 'replace') {
+        const targetLine = lines[change.lineLeft];
+        const expectedContent = change.content;
+        
+        if (targetLine === undefined || targetLine.trim() !== expectedContent.trim()) {
+            UI.showError(`⚠️ Sync Error: Editor content changed. Expected "${expectedContent.trim().substring(0, 20)}..." at line ${change.lineLeft + 1}. Please re-compare.`);
+            return;
+        }
+    }
+    // --------------------
+    
     
     if (action === 'add') {
-      // Insert content at lineLeft
-      lines.splice(change.lineLeft, 0, change.content);
+      // SPECIAL CASE: If lineLeft is beyond the array length, we need to find where to insert
+      // This happens when the diff thinks we should add at a line that doesn't exist yet
+      let insertionPoint = change.lineLeft;
+      
+      if (insertionPoint >= lines.length) {
+        // Find the last closing brace/bracket
+        for (let i = lines.length - 1; i >= 0; i--) {
+          if (lines[i].trim().match(/^[}\]]/)) {
+            insertionPoint = i;
+            break;
+          }
+        }
+      }
+      
+      lines.splice(insertionPoint, 0, change.content);
+      // Update change.lineLeft for comma logic below
+      change.lineLeft = insertionPoint;
     } else if (action === 'remove') {
-      // Remove content at lineLeft
       lines.splice(change.lineLeft, 1);
     } else if (action === 'replace') {
-      // Replace content at lineLeft
-      // The 'change' object is the 'removed' part.
-      // We need the 'added' part content.
-      // Since we grouped them, the next item in diff is the added part.
       const nextChange = diff[index + 1];
       if (nextChange && nextChange.type === 'added') {
          lines.splice(change.lineLeft, 1, nextChange.content);
@@ -173,11 +229,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Update Editor
-    const newValue = lines.join('\n');
+    // FIX: JSON Comma Management
+    // Inspect the lines around the change to fix commas.
+    // 1. If we inserted a line (add/replace)
+    if (action === 'add' || action === 'replace') {
+        const insertedIndex = change.lineLeft;
+        const insertedLine = lines[insertedIndex];
+        const nextLine = lines[insertedIndex + 1];
+        const prevLine = lines[insertedIndex - 1];
+
+        // Case A: Inserted at the end of an object/array (followed by closing brace)
+        if (nextLine && nextLine.trim().match(/^[}\]]/)) {
+            // New line must NOT have a comma
+            if (insertedLine.trim().endsWith(',')) {
+                lines[insertedIndex] = insertedLine.replace(/,$/, '');
+            }
+            // Previous line MUST have a comma (if it's a property/value)
+            if (prevLine && !prevLine.trim().match(/^[{\[]/) && !prevLine.trim().endsWith(',')) {
+                lines[insertedIndex - 1] = prevLine + ',';
+            }
+        } 
+        // Case B: Inserted in the middle
+        else if (nextLine) {
+            // New line MUST have a comma
+            if (!insertedLine.trim().endsWith(',')) {
+                lines[insertedIndex] = insertedLine + ',';
+            }
+            // Previous line MUST have a comma
+            if (prevLine && !prevLine.trim().match(/^[{\[]/) && !prevLine.trim().endsWith(',')) {
+                lines[insertedIndex - 1] = prevLine + ',';
+            }
+        }
+    }
+    // 2. If we removed a line
+    else if (action === 'remove') {
+        // If we removed the last element, the new last element must NOT have a comma
+        const newCurrent = lines[change.lineLeft]; // This is the line that shifted up
+        const prevLine = lines[change.lineLeft - 1];
+        
+        if (newCurrent && newCurrent.trim().match(/^[}\]]/)) {
+            // We are now at the end. Previous line must NOT have comma.
+            if (prevLine && prevLine.trim().endsWith(',')) {
+                lines[change.lineLeft - 1] = prevLine.replace(/,$/, '');
+            }
+        }
+    }
+
+    // NOW join after all modifications
+    let newValue = lines.join('\n');
+    
     UI.editors.left.setValue(newValue);
     
-    // Re-run Diff
-    document.getElementById('btn-compare').click();
+    // Validate and Re-Compare
+    const { error } = Formatter.parse(newValue);
+    if (error) {
+        UI.showError('⚠️ Warning: Merge resulted in invalid JSON (check braces). Please fix manually.');
+         UI.elements.diffOutput.innerHTML = '<div style="padding: 20px; color: var(--error-color);">Diff is disabled until JSON errors are fixed.</div>';
+    } else {
+        document.getElementById('btn-compare').click();
+    }
   };
 });
 

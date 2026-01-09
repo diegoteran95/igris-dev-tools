@@ -34,12 +34,14 @@
     <div class="toolbar">
       <button id="btn-format" class="primary">Format</button>
       <button id="btn-minify">Minify</button>
+      <button id="btn-escape">Escape</button>
       <button id="btn-compare" class="primary" style="display: none;">Compare</button>
       <button id="btn-diff">Diff Mode</button>
       <button id="btn-clear">Clear</button>
     </div>
 
     <div id="error-msg" class="error-message"></div>
+    <div id="success-msg" class="success-message"></div>
 
     <div id="format-workspace" class="workspace">
       <div class="pane">
@@ -61,7 +63,7 @@
     <div id="diff-workspace" class="workspace" style="display: none;">
       <div class="pane">
         <input type="text" id="label-left" class="pane-label" placeholder="Original JSON" value="Original JSON">
-        <div class="editor-container" style="position: relative;">
+        <div class="editor-container">
           <button id="btn-copy-diff" class="floating-copy" title="Copy Merged JSON">📋 Copy</button>
           <div id="diff-input-left-container">
             <!-- Editor injected here -->
