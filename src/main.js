@@ -201,6 +201,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --------------------
     
     
+    
+    // Helper function to get indentation level
+    const getIndent = (line) => {
+      const match = line.match(/^(\s*)/);
+      return match ? match[1] : '';
+    };
+    
+    // Helper function to normalize indentation
+    const normalizeIndent = (content, targetIndent) => {
+      const currentIndent = getIndent(content);
+      const trimmed = content.trimStart();
+      return targetIndent + trimmed;
+    };
+    
     if (action === 'add') {
       // SPECIAL CASE: If lineLeft is beyond the array length, we need to find where to insert
       // This happens when the diff thinks we should add at a line that doesn't exist yet
@@ -216,7 +230,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
-      lines.splice(insertionPoint, 0, change.content);
+      // Determine the correct indentation by looking at surrounding lines
+      let targetIndent = '  '; // default 2 spaces
+      
+      // Try to get indent from previous line (if it's a property)
+      if (insertionPoint > 0) {
+        const prevLine = lines[insertionPoint - 1];
+        if (prevLine && prevLine.trim() && !prevLine.trim().match(/^[{\[]/)) {
+          targetIndent = getIndent(prevLine);
+        }
+      }
+      
+      // If previous line was opening brace, look at next line
+      if (insertionPoint < lines.length) {
+        const nextLine = lines[insertionPoint];
+        if (nextLine && nextLine.trim() && !nextLine.trim().match(/^[}\]]/)) {
+          targetIndent = getIndent(nextLine);
+        }
+      }
+      
+      // Normalize the content to match target indentation
+      const normalizedContent = normalizeIndent(change.content, targetIndent);
+      
+      lines.splice(insertionPoint, 0, normalizedContent);
       // Update change.lineLeft for comma logic below
       change.lineLeft = insertionPoint;
     } else if (action === 'remove') {
@@ -224,7 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (action === 'replace') {
       const nextChange = diff[index + 1];
       if (nextChange && nextChange.type === 'added') {
-         lines.splice(change.lineLeft, 1, nextChange.content);
+         // Get the indentation from the line being replaced
+         const targetIndent = getIndent(lines[change.lineLeft]);
+         const normalizedContent = normalizeIndent(nextChange.content, targetIndent);
+         lines.splice(change.lineLeft, 1, normalizedContent);
       }
     }
     
