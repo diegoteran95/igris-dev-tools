@@ -62,6 +62,18 @@ header {
   /* Ensure text is dark blue for contrast */
 }
 
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+#app-logo {
+  height: 60px;
+  width: auto;
+  border-radius: 4px;
+}
+
 [data-theme="dark"] header {
   background-color: var(--bg-color);
   /* Keep dark bg in dark mode */
