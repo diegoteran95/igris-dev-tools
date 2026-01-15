@@ -5,88 +5,14 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Igris JSON Tools</title>
+  <title>Igris Dev Tools</title>
   <link rel="stylesheet" href="./src/style.css">
 </head>
 
 <body>
   <div id="app">
-    <header>
-      <div class="header-logo">
-        <img src="/favicon.png" alt="Igris Logo" id="app-logo">
-        <h1>Igris JSON Tools</h1>
-      </div>
-      <button id="theme-toggle" aria-label="Toggle Dark Mode">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-      </button>
-    </header>
+    <!-- MainLayout renders here -->
   </div>
-
-  <main>
-    <div class="toolbar">
-      <button id="btn-format" class="primary">Format</button>
-      <button id="btn-minify">Minify</button>
-      <button id="btn-escape">Escape</button>
-      <button id="btn-compare" class="primary" style="display: none;">Compare</button>
-      <button id="btn-diff">Diff Mode</button>
-      <button id="btn-clear">Clear</button>
-    </div>
-
-    <div id="error-msg" class="error-message"></div>
-    <div id="success-msg" class="success-message"></div>
-
-    <div id="format-workspace" class="workspace">
-      <div class="pane">
-        <div class="editor-container">
-          <textarea id="json-input" placeholder="Paste JSON here..."></textarea>
-        </div>
-      </div>
-      <div class="pane">
-        <div class="editor-container">
-          <button id="btn-copy-format" class="floating-copy" title="Copy to Clipboard">📋 Copy</button>
-          <div id="json-output" class="code-view" contenteditable="false"></div>
-        </div>
-      </div>
-    </div>
-
-    <p class="note" id="diff-note" style="display: none;">*Puedes modificar el título de cada JSON para que sea más
-      descriptivo</p>
-
-    <div id="diff-workspace" class="workspace" style="display: none;">
-      <div class="pane">
-        <input type="text" id="label-left" class="pane-label" placeholder="Original JSON" value="Original JSON">
-        <div class="editor-container">
-          <button id="btn-copy-diff" class="floating-copy" title="Copy Merged JSON">📋 Copy</button>
-          <div id="diff-input-left-container">
-            <!-- Editor injected here -->
-          </div>
-        </div>
-      </div>
-      <div class="pane">
-        <input type="text" id="label-right" class="pane-label" placeholder="Modified JSON" value="Modified JSON">
-        <div class="editor-container" id="diff-input-right-container">
-          <!-- Editor injected here -->
-        </div>
-      </div>
-      <div class="pane">
-        <div class="pane-label-static">Comparison Result</div>
-        <div class="editor-container">
-          <div id="diff-output" class="code-view"></div>
-        </div>
-      </div>
-    </div>
-  </main>
   <script type="module" src="/src/main.js"></script>
 </body>
 
