@@ -22,10 +22,13 @@ export class UUIDGeneratorTool extends BaseTool {
               <input type="number" id="uuid-quantity" value="1" min="1" max="1000" style="width: 80px;">
             </label>
 
-            <button id="btn-generate-v4" class="btn primary">Generate UUID v4</button>
-            <button id="btn-generate-v7" class="btn primary">Generate UUID v7</button>
+            <div class="btn-group">
+              <button id="btn-generate-v4" class="btn primary">UUID v4</button>
+              <button id="btn-generate-v7" class="btn">UUID v7</button>
+            </div>
+            <span class="toolbar-sep"></span>
             <div id="btn-copy-all-uuids"></div>
-            <button id="btn-clear-uuids" class="btn">Clear</button>
+            <button id="btn-clear-uuids" class="btn ghost">Clear</button>
           </div>
         </div>
 

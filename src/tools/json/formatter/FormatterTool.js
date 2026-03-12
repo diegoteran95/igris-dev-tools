@@ -20,10 +20,13 @@ export class FormatterTool extends BaseTool {
     this.container.innerHTML = `
       <div class="formatter-tool">
         <div class="toolbar">
-          <button id="btn-format" class="btn primary">Format</button>
-          <button id="btn-minify" class="btn">Minify</button>
-          <button id="btn-escape" class="btn">Escape</button>
-          <button id="btn-clear" class="btn">Clear</button>
+          <div class="btn-group">
+            <button id="btn-format" class="btn primary">Format</button>
+            <button id="btn-minify" class="btn">Minify</button>
+            <button id="btn-escape" class="btn">Escape</button>
+          </div>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear" class="btn ghost">Clear</button>
         </div>
 
         <div class="workspace">

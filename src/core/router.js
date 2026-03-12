@@ -25,7 +25,10 @@ export class Router {
     }
 
     window.addEventListener('hashchange', () => this.handleRoute());
-    window.addEventListener('load', () => this.handleRoute());
+
+    // Handle the initial route immediately — the 'load' event has already
+    // fired by the time init() is called (async tool imports in main.js).
+    this.handleRoute();
   }
 
   /**
@@ -56,8 +59,8 @@ export class Router {
     if (isHomePage || toolId === 'home') {
       toolConfig = {
         id: 'home',
-        name: 'Inicio',
-        description: 'Bienvenido a Igris Dev Tools',
+        name: 'Home',
+        description: 'Welcome to Igris Dev Tools',
         icon: '🏠',
         component: null // Will be loaded dynamically
       };
@@ -142,18 +145,43 @@ export class Router {
   }
 
   /**
-   * Update tool header with name and description
+   * Update tool header with breadcrumb and description
    * @param {Object} toolConfig
    */
   updateHeader(toolConfig) {
     if (!this.headerEl) return;
 
+    // Hide header for home page
+    if (toolConfig.id === 'home') {
+      this.headerEl.innerHTML = '';
+      return;
+    }
+
+    // Find category for breadcrumb
+    let categoryName = '';
+    try {
+      const categories = ToolRegistry.getCategoriesWithTools();
+      for (const cat of categories) {
+        if (cat.tools.some(t => t.id === toolConfig.id)) {
+          categoryName = cat.name;
+          break;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    const breadcrumbPrefix = categoryName
+      ? `<span class="breadcrumb-category">${categoryName}</span><span class="breadcrumb-sep">/</span>`
+      : '';
+
     this.headerEl.innerHTML = `
       <div class="tool-header-content">
-        <span class="tool-icon">${toolConfig.icon}</span>
-        <div class="tool-info">
+        <span class="tool-icon-inline">${toolConfig.icon}</span>
+        <div class="tool-breadcrumb">
+          ${breadcrumbPrefix}
           <h1 class="tool-title">${toolConfig.name}</h1>
-          <p class="tool-description">${toolConfig.description}</p>
+          <span class="tool-description">${toolConfig.description}</span>
         </div>
       </div>
     `;

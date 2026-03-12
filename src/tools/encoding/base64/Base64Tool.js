@@ -20,9 +20,12 @@ export class Base64Tool extends BaseTool {
     this.container.innerHTML = `
       <div class="base64-tool">
         <div class="toolbar">
-          <button id="btn-encode" class="btn primary">Encode to Base64</button>
-          <button id="btn-decode" class="btn primary">Decode from Base64</button>
-          <button id="btn-clear-base64" class="btn">Clear</button>
+          <div class="btn-group">
+            <button id="btn-encode" class="btn primary">Encode</button>
+            <button id="btn-decode" class="btn">Decode</button>
+          </div>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear-base64" class="btn ghost">Clear</button>
         </div>
 
         <p class="note">Tip: Drag & drop a file to encode it to Base64</p>

@@ -18,11 +18,16 @@ export class URLEncoderTool extends BaseTool {
     this.container.innerHTML = `
       <div class="url-encoder-tool">
         <div class="toolbar">
-          <button id="btn-encode-url" class="btn primary">Encode URL Component</button>
-          <button id="btn-decode-url" class="btn primary">Decode URL Component</button>
-          <button id="btn-encode-full" class="btn">Encode Full URL</button>
-          <button id="btn-decode-full" class="btn">Decode Full URL</button>
-          <button id="btn-clear-url" class="btn">Clear</button>
+          <div class="btn-group">
+            <button id="btn-encode-url" class="btn primary">Encode Component</button>
+            <button id="btn-decode-url" class="btn">Decode Component</button>
+          </div>
+          <div class="btn-group">
+            <button id="btn-encode-full" class="btn">Encode URL</button>
+            <button id="btn-decode-full" class="btn">Decode URL</button>
+          </div>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear-url" class="btn ghost">Clear</button>
         </div>
 
         <div class="workspace">

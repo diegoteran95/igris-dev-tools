@@ -35,7 +35,8 @@ export class TextSplitterTool extends BaseTool {
             </label>
 
             <button id="btn-split" class="btn primary">Split</button>
-            <button id="btn-clear-splitter" class="btn">Clear</button>
+            <span class="toolbar-sep"></span>
+            <button id="btn-clear-splitter" class="btn ghost">Clear</button>
           </div>
         </div>
 

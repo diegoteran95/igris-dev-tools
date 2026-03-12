@@ -25,7 +25,7 @@ export class TimestampConverterTool extends BaseTool {
                 ${this.renderTimezoneOptions()}
               </select>
             </label>
-            <button id="btn-now" class="btn">Now</button>
+            <button id="btn-now" class="btn primary">Now</button>
           </div>
         </div>
 

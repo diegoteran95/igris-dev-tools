@@ -31,7 +31,7 @@ export class MainLayout {
             <input
               type="text"
               id="tool-search"
-              placeholder="Search tools..."
+              placeholder="Search... ⌘K"
               autocomplete="off"
             />
             <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -110,13 +110,15 @@ export class MainLayout {
         <div class="nav-category-header">
           <span class="nav-category-icon">${category.icon}</span>
           <span class="nav-category-name">${category.name}</span>
-          <svg class="nav-category-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="nav-category-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
-        <ul class="nav-category-tools">
-          ${category.tools.map(tool => this.renderToolLink(tool)).join('')}
-        </ul>
+        <div class="nav-category-tools">
+          <div class="nav-category-tools-inner">
+            ${category.tools.map(tool => this.renderToolLink(tool)).join('')}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -128,7 +130,7 @@ export class MainLayout {
    */
   renderToolLink(tool) {
     return `
-      <li>
+      <div>
         <a href="#/${tool.id}"
            class="nav-tool-link"
            data-tool-id="${tool.id}"
@@ -136,7 +138,7 @@ export class MainLayout {
           <span class="nav-tool-icon">${tool.icon}</span>
           <span class="nav-tool-name">${tool.name}</span>
         </a>
-      </li>
+      </div>
     `;
   }
 
@@ -179,6 +181,18 @@ export class MainLayout {
     if (searchInput) {
       searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
     }
+
+    // Ctrl+K / Cmd+K to focus search
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const search = document.getElementById('tool-search');
+        if (search) {
+          search.focus();
+          search.select();
+        }
+      }
+    });
 
     // Logo and title click - navigate to home
     const logo = document.querySelector('.sidebar-logo');

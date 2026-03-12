@@ -17,7 +17,8 @@ export class JWTDecoderTool extends BaseTool {
       <div class="jwt-decoder-tool">
         <div class="toolbar">
           <button id="btn-decode-jwt" class="btn primary">Decode JWT</button>
-          <button id="btn-clear-jwt" class="btn">Clear</button>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear-jwt" class="btn ghost">Clear</button>
         </div>
 
         <div class="workspace vertical">

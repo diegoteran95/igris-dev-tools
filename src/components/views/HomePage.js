@@ -17,29 +17,29 @@ export class HomePage extends BaseTool {
         <div class="home-hero">
           <img src="/favicon.png" alt="Igris Dev Tools" class="home-logo">
           <h1 class="home-title">Igris Dev Tools</h1>
-          <p class="home-subtitle">Herramientas esenciales para desarrolladores. 100% en tu navegador.</p>
+          <p class="home-subtitle">Essential tools for developers. 100% in your browser.</p>
         </div>
 
         <div class="home-features">
           <div class="feature-card">
             <div class="feature-icon">🔒</div>
-            <h3>100% Privado</h3>
-            <p>Todo se procesa localmente en tu navegador. Tus datos nunca salen de tu máquina.</p>
+            <h3>100% Private</h3>
+            <p>Everything runs locally in your browser. Your data never leaves your machine.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">⚡</div>
-            <h3>Rápido y Ligero</h3>
-            <p>Sin instalaciones, sin dependencias. Solo abre y usa.</p>
+            <h3>Fast & Lightweight</h3>
+            <p>No installations, no dependencies. Just open and use.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">🎨</div>
-            <h3>Interfaz Limpia</h3>
-            <p>Diseño simple y funcional para maximizar tu productividad.</p>
+            <h3>Clean Interface</h3>
+            <p>Simple and functional design to maximize your productivity.</p>
           </div>
         </div>
 
         <div class="home-tools">
-          <h2 class="home-section-title">Herramientas Disponibles</h2>
+          <h2 class="home-section-title">Available Tools</h2>
           <div class="tools-grid">
             ${this.renderToolsGrid(categories)}
           </div>

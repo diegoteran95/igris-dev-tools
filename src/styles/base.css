@@ -7,13 +7,15 @@
   --kushki-white: #FFFFFF;
 
   /* Colors - Light Theme */
-  --bg-primary: #f8f9fa;
+  --bg-primary: #f5f6f8;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e8e8e8;
-  --text-primary: #023365;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
-  --border-color: #dee2e6;
+  --bg-tertiary: #e8eaed;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #eef0f3;
+  --text-primary: #1a2235;
+  --text-secondary: #596070;
+  --text-tertiary: #8f99a8;
+  --border-color: #d8dce4;
   --accent-color: #023365;
   --accent-hover: #011c3d;
   --success-color: #198754;
@@ -24,12 +26,13 @@
   /* Sidebar */
   --sidebar-bg: #00E6B2;
   --sidebar-text: #023365;
-  --sidebar-hover: #00d4a3;
-  --sidebar-active: #023365;
-  --sidebar-border: #00d4a3;
+  --sidebar-hover: rgba(0, 0, 0, 0.08);
+  --sidebar-active-bg: rgba(0, 0, 0, 0.13);
+  --sidebar-active-indicator: #023365;
+  --sidebar-border: rgba(0, 0, 0, 0.1);
 
   /* Code highlighting */
-  --code-bg: #f8f8f8;
+  --code-bg: #f7f8fa;
   --code-string: #22863a;
   --code-number: #005cc5;
   --code-boolean: #d73a49;
@@ -42,9 +45,19 @@
   --diff-removed-bg: #ffebe9;
   --diff-removed-border: #d73a49;
 
-  /* Fonts */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --code-font: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
+  --code-font: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, 'Courier New', monospace;
+
+  /* Font Scale */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -63,9 +76,19 @@
   --transition-normal: 250ms ease;
   --transition-slow: 350ms ease;
 
-  /* Sidebar width */
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 60px;
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.2);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(2, 51, 101, 0.2);
+
+  /* Sidebar dimensions */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 52px;
 }
 
 /* Dark Theme */
@@ -73,20 +96,23 @@ body[data-theme="dark"] {
   --bg-primary: #023365;
   --bg-secondary: rgba(0, 0, 0, 0.2);
   --bg-tertiary: rgba(0, 0, 0, 0.3);
-  --text-primary: #f8f9fa;
+  --bg-elevated: rgba(255, 255, 255, 0.06);
+  --bg-sunken: rgba(0, 0, 0, 0.35);
+  --text-primary: #e8ecf2;
   --text-secondary: #adb5bd;
-  --text-tertiary: #868e96;
-  --border-color: rgba(255, 255, 255, 0.2);
+  --text-tertiary: #6c757d;
+  --border-color: rgba(255, 255, 255, 0.12);
   --accent-color: #00E6B2;
   --accent-hover: #00d4a3;
 
   --sidebar-bg: #011c3d;
-  --sidebar-text: #f8f9fa;
-  --sidebar-hover: #023365;
-  --sidebar-active: #00E6B2;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-text: #e8ecf2;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: rgba(0, 230, 178, 0.12);
+  --sidebar-active-indicator: #00E6B2;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
 
-  --code-bg: #1e1e1e;
+  --code-bg: #011429;
   --code-string: #89d185;
   --code-number: #6db3f2;
   --code-boolean: #f97583;
@@ -97,6 +123,14 @@ body[data-theme="dark"] {
   --diff-added-border: #34d058;
   --diff-removed-bg: #3a1a1a;
   --diff-removed-border: #d73a49;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.6);
+
+  --focus-ring: 0 0 0 3px rgba(0, 230, 178, 0.3);
 }
 
 /* Reset & Base */
@@ -113,11 +147,14 @@ html, body {
 
 body {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.6;
   color: var(--text-primary);
   background: var(--bg-primary);
   transition: background var(--transition-normal), color var(--transition-normal);
+  /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
 }
 
 /* Typography */
@@ -127,10 +164,10 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--spacing-sm);
 }
 
-h1 { font-size: 24px; }
-h2 { font-size: 20px; }
-h3 { font-size: 18px; }
-h4 { font-size: 16px; }
+h1 { font-size: var(--text-xl); }
+h2 { font-size: var(--text-lg); }
+h3 { font-size: var(--text-md); }
+h4 { font-size: var(--text-base); }
 
 p {
   margin-bottom: var(--spacing-md);
@@ -146,10 +183,17 @@ a:hover {
   color: var(--accent-hover);
 }
 
+/* Focus visible */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
 /* Buttons */
 button {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: var(--text-base);
   border: none;
   background: none;
   cursor: pointer;
@@ -162,11 +206,18 @@ button:disabled {
 }
 
 .btn {
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: 5px 12px;
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+  font-size: var(--text-base);
+  font-family: var(--font-family);
+  line-height: 1.5;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .btn:hover:not(:disabled) {
@@ -184,16 +235,77 @@ button:disabled {
   border-color: var(--accent-hover);
 }
 
+.btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn.ghost:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn.outline {
+  background: transparent;
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn.outline:hover:not(:disabled) {
+  background: var(--bg-secondary);
+  border-color: var(--accent-color);
+}
+
+.btn.sm {
+  padding: 3px 8px;
+  font-size: var(--text-xs);
+}
+
+.btn.icon-only {
+  padding: 5px;
+  line-height: 1;
+}
+
+/* Button group */
+.btn-group {
+  display: inline-flex;
+}
+
+.btn-group .btn {
+  border-radius: 0;
+  border-right-width: 0;
+}
+
+.btn-group .btn:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.btn-group .btn:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-right-width: 1px;
+}
+
+/* Toolbar separator */
+.toolbar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-color);
+  flex-shrink: 0;
+  align-self: center;
+}
+
 /* Inputs */
 input, textarea, select {
   font-family: var(--font-family);
-  font-size: 14px;
-  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--text-base);
+  padding: 5px var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   background: var(--bg-primary);
   color: var(--text-primary);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
   z-index: auto;
 }
@@ -201,6 +313,7 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent-color);
+  box-shadow: var(--focus-ring);
 }
 
 textarea {
@@ -219,7 +332,7 @@ select:not([disabled]) {
 /* Code */
 code, pre {
   font-family: var(--code-font);
-  font-size: 13px;
+  font-size: var(--text-base);
 }
 
 .code-view {
@@ -238,19 +351,19 @@ code, pre {
 .code-view .null { color: var(--code-null); }
 .code-view .key { color: var(--code-key); font-weight: 600; }
 
-/* Scrollbar */
+/* Scrollbar - Webkit */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

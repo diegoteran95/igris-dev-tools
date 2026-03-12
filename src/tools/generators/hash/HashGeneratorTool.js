@@ -17,11 +17,14 @@ export class HashGeneratorTool extends BaseTool {
     this.container.innerHTML = `
       <div class="hash-generator-tool">
         <div class="toolbar">
-          <button id="btn-hash-md5" class="btn primary">Generate MD5</button>
-          <button id="btn-hash-sha1" class="btn primary">Generate SHA-1</button>
-          <button id="btn-hash-sha256" class="btn primary">Generate SHA-256</button>
-          <button id="btn-hash-all" class="btn">Generate All</button>
-          <button id="btn-clear-hash" class="btn">Clear</button>
+          <div class="btn-group">
+            <button id="btn-hash-md5" class="btn primary">MD5</button>
+            <button id="btn-hash-sha1" class="btn">SHA-1</button>
+            <button id="btn-hash-sha256" class="btn">SHA-256</button>
+          </div>
+          <button id="btn-hash-all" class="btn">All</button>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear-hash" class="btn ghost">Clear</button>
         </div>
 
         <p class="note">Tip: Drag & drop a file to generate its hash</p>

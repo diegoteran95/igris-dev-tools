@@ -24,7 +24,8 @@ export class DifferTool extends BaseTool {
       <div class="differ-tool">
         <div class="toolbar">
           <button id="btn-compare" class="btn primary">Compare</button>
-          <button id="btn-clear-diff" class="btn">Clear</button>
+          <span class="toolbar-sep"></span>
+          <button id="btn-clear-diff" class="btn ghost">Clear</button>
         </div>
 
         <p class="note">Tip: You can edit the titles and drag & drop JSON files</p>
